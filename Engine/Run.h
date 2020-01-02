@@ -23,13 +23,14 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Graphics.h"
+#include "Canvas.h"
 
-class Game
+class Run
 {
 public:
-	Game( class MainWindow& wnd );
-	Game( const Game& ) = delete;
-	Game& operator=( const Game& ) = delete;
+	Run( class MainWindow& wnd );
+	Run( const Run& ) = delete;
+	Run& operator=( const Run& ) = delete;
 	void Go();
 private:
 	void ComposeFrame();
@@ -40,6 +41,7 @@ private:
 private:
 	MainWindow& wnd;
 	Graphics gfx;
+	Canvas c;
 	/********************************/
 	/*  User Variables              */
 	/********************************/

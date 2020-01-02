@@ -19,16 +19,16 @@
  *	along with The Chili DirectX Framework.  If not, see <http://www.gnu.org/licenses/>.  *
  ******************************************************************************************/
 #include "MainWindow.h"
-#include "Game.h"
+#include "Run.h"
 
-Game::Game( MainWindow& wnd )
+Run::Run( MainWindow& wnd )
 	:
 	wnd( wnd ),
 	gfx( wnd )
 {
 }
 
-void Game::Go()
+void Run::Go()
 {
 	gfx.BeginFrame();	
 	UpdateModel();
@@ -36,10 +36,11 @@ void Game::Go()
 	gfx.EndFrame();
 }
 
-void Game::UpdateModel()
+void Run::UpdateModel()
 {
 }
 
-void Game::ComposeFrame()
+void Run::ComposeFrame()
 {
+	c.drawScene(gfx);
 }
