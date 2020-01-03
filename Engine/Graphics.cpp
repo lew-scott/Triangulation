@@ -354,7 +354,7 @@ void Graphics::Drawline(Vec2 p1, Vec2 p2, Color color)
 		for (int y = (int)p1.y; y <= (int)p2.y; y++)
 		{
 			const float x = w * (float)y + p;
-			PutPixel(x, (int)y, color);
+			PutPixel((int)x, (int)y, color);
 		}
 	}
 

@@ -84,3 +84,5 @@ Vec2 & Vec2::rotate(float angle)
 
 	return *this;
 }
+
+

@@ -38,6 +38,11 @@ void Run::Go()
 
 void Run::UpdateModel()
 {
+	x = wnd.mouse.GetPosX();
+	y = wnd.mouse.GetPosY();
+	pos = { x,y };
+	c.updateParticlePos(pos);
+	c.calcIntersects();
 }
 
 void Run::ComposeFrame()

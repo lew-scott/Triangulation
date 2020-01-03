@@ -24,6 +24,7 @@
 #include "Mouse.h"
 #include "Graphics.h"
 #include "Canvas.h"
+#include "Vec2.h"
 
 class Run
 {
@@ -45,4 +46,7 @@ private:
 	/********************************/
 	/*  User Variables              */
 	/********************************/
+	Vec2 pos = {400.0f,300.0f};
+	float x;
+	float y;
 };

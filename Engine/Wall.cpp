@@ -13,3 +13,13 @@ void Wall::draw(Graphics & gfx)
 {
 	gfx.Drawline(p1, p2, Colors::Gray);
 }
+
+Vec2 Wall::getP1()
+{
+	return p1;
+}
+
+Vec2 Wall::getP2()
+{
+	return p2;
+}
