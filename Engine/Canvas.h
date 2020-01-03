@@ -16,7 +16,7 @@ public:
 
 private:
 	Particle p;
-	static constexpr int walls = 2;
+	static constexpr int walls = 10;
 	Wall w[walls];
 	std::random_device rd;
 	std::mt19937 rng;
