@@ -13,7 +13,8 @@ public:
 	
 
 private:
-	Point p[4];
+	static constexpr int nPoints = 4;
+	Point p[nPoints];
 	std::random_device rd;
 	std::mt19937 rng;
 	std::uniform_real_distribution<float> xDist;

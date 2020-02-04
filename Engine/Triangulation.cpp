@@ -6,7 +6,10 @@ Triangulation::Triangulation()
 	xDist(0, 770),
 	yDist(0, 570)
 {
-	p.init(Vec2(xDist(rng), yDist(rng)));
+	for (int i = 0; i < nPoints; ++i)
+	{
+		p[i].init(Vec2(xDist(rng), yDist(rng)));
+	}
 }
 
 void Triangulation::drawScene(Graphics& gfx)
