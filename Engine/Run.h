@@ -23,7 +23,7 @@
 #include "Keyboard.h"
 #include "Mouse.h"
 #include "Graphics.h"
-#include "Canvas.h"
+#include "Triangulation.h"
 #include "Vec2.h"
 
 class Run
@@ -42,11 +42,7 @@ private:
 private:
 	MainWindow& wnd;
 	Graphics gfx;
-	Canvas c;
 	/********************************/
 	/*  User Variables              */
 	/********************************/
-	Vec2 pos = {400.0f,300.0f};
-	float x;
-	float y;
 };
