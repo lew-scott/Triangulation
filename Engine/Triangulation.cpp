@@ -10,6 +10,7 @@ Triangulation::Triangulation()
 	{
 		p[i].init(Vec2(xDist(rng), yDist(rng)));
 	}
+	p.init(Vec2(xDist(rng), yDist(rng)));
 }
 
 void Triangulation::drawScene(Graphics& gfx)
