@@ -26,6 +26,7 @@ Run::Run( MainWindow& wnd )
 	wnd( wnd ),
 	gfx( wnd )
 {
+	T.makeTriangles();
 }
 
 void Run::Go()
@@ -38,8 +39,10 @@ void Run::Go()
 
 void Run::UpdateModel()
 {
+	
 }
 
 void Run::ComposeFrame()
 {
+	T.drawScene(gfx);
 }
