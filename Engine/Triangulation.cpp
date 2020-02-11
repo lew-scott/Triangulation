@@ -13,15 +13,7 @@ Triangulation::Triangulation()
 		Vec2 P = { xDist(rng),yDist(rng) };
 		points.push_back(P);
 	}
-	/*
-	points.push_back({ 276.472, 217.291 });
-	points.push_back({ 335.332, 260.93 });
-	points.push_back({ 353.002, 458.704 });
-	points.push_back({ 359.424, 417.056 });
-	points.push_back({ 518.613, 195.716 });
-	points.push_back({ 559.512, 313.15 });
-	points.push_back({ 646.199, 261.582 });
-	*/
+
 }
 
 void Triangulation::drawScene(Graphics& gfx)
@@ -138,14 +130,5 @@ void Triangulation::SortVector()
 
 }
 
-void Triangulation::writePos()
-{
-	std::ofstream file;
-	file.open("pos.txt");
-	for (int i = 0; i < nPoints; i++)
-	{
-		file << points[i].x << " , " << points[i].y << "\n"; 
-	}
-	file.close();
-}
+
 

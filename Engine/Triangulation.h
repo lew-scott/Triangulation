@@ -19,7 +19,7 @@ public:
 	void findEdges();
 	void Triangulate();
 	void SortVector();
-	void writePos();
+
 
 	
 private:
