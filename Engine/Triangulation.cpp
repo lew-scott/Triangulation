@@ -85,16 +85,16 @@ bool Triangulation::smallerDistance(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4)
 void Triangulation::findEdges()
 {
 	
-	for (int j = 3; j < nPoints; j++) // start at 3 
+	for (int j = 3; j < nPoints; j++) // start at next (3) point outside the first triangle
 	{
-		for (int i = 0; i < j; i++)
+		for (int i = 0; i < j; i++) // check points before for possible connection
 		{
 			bool newEdge = true;
 			int num = (int)edges.size();
 
-			for (int k = 0; k < num; k++)
+			for (int k = 0; k < num; k++) // test for overlapping lines 
 			{
-				if (lineIntersection(points[j],points[i],points[edges[k].x],points[edges[k].y]) == true )// && lineIntersection(points[edges[k].x], points[edges[k].y], points[j], points[i]) == true)
+				if (lineIntersection(points[j],points[i],points[edges[k].x],points[edges[k].y]) == true )
 				{
 					newEdge = false;
 				}
@@ -110,7 +110,7 @@ void Triangulation::findEdges()
 
 void Triangulation::Triangulate()
 {
-
+	// make triangles
 	edges.clear();
 	SortVector();
 	edges.push_back({ 0, 1 });
@@ -119,7 +119,6 @@ void Triangulation::Triangulate()
 	findEdges();
 	updatePos();
 	updateVel();
-
 }
 
 
@@ -132,10 +131,11 @@ void Triangulation::SortVector()
 		{
 			if (points[i].x > points[i + 1].x)
 			{
+				// sort points by x position
 				Vec2 temp = points[i];
 				points[i] = points[i + 1];
 				points[i + 1] = temp;
-
+				// important re-order vel respectively
 				Vec2 temp2 = vel[i];
 				vel[i] = vel[i + 1];
 				vel[i + 1] = temp2;
@@ -155,6 +155,7 @@ void Triangulation::updatePos()
 
 void Triangulation::updateVel()
 {
+	// check for collision with boundary, flip velocity accordingly
 	for (int i = 0; i < nPoints; i++)
 	{
 		if (points[i].x < 20)
