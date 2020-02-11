@@ -4,16 +4,16 @@ Triangulation::Triangulation()
 	:
 	rng(rd()),
 	xDist(150.0f, 700.0f),
-	yDist(150.0f, 500.0f)
-	//velDist(-5,5)
+	yDist(150.0f, 500.0f),
+	vDist(-2.5,2.5)
 {
-
 	for (int i = 0; i < nPoints; ++i)
 	{
 		Vec2 P = { xDist(rng),yDist(rng) };
 		points.push_back(P);
+		Vec2 V = { vDist(rng), vDist(rng) };
+		vel.push_back(V);
 	}
-
 }
 
 void Triangulation::drawScene(Graphics& gfx)
@@ -25,7 +25,7 @@ void Triangulation::drawScene(Graphics& gfx)
 
 	for (int i = 0; i < edges.size(); ++i)
 	{
-		drawEdge(gfx, points[edges[i].x], points[edges[i].y]);
+		drawEdge(gfx, points[edges[i].x], points[edges[i].y], i);
 	}
 }
 
@@ -35,9 +35,17 @@ void Triangulation::drawPoint(Graphics& gfx, Vec2 p)
 }
 
 
-void Triangulation::drawEdge(Graphics & gfx, Vec2 a, Vec2 b)
+void Triangulation::drawEdge(Graphics & gfx, Vec2 a, Vec2 b, int i)
 {
-	gfx.Drawline({ a.x, a.y }, { b.x, b.y }, Colors::White);
+	if (i % 2 == 0)
+	{
+		gfx.Drawline({ a.x, a.y }, { b.x, b.y }, Colors::White);
+	}
+	else if (i % 2 == 1)
+	{
+		gfx.Drawline({ a.x, a.y }, { b.x, b.y }, Colors::Green);
+	}
+	
 }
 
 bool Triangulation::lineIntersection(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4)
@@ -102,13 +110,16 @@ void Triangulation::findEdges()
 
 void Triangulation::Triangulate()
 {
+
+	edges.clear();
 	SortVector();
-	writePos();
 	edges.push_back({ 0, 1 });
 	edges.push_back({ 1, 2 });
 	edges.push_back({ 2, 0 });
-
 	findEdges();
+	updatePos();
+	updateVel();
+
 }
 
 
@@ -124,10 +135,50 @@ void Triangulation::SortVector()
 				Vec2 temp = points[i];
 				points[i] = points[i + 1];
 				points[i + 1] = temp;
+
+				Vec2 temp2 = vel[i];
+				vel[i] = vel[i + 1];
+				vel[i + 1] = temp2;
 			}
 		}
 	}
 
+}
+
+void Triangulation::updatePos()
+{
+	for (int i = 0; i < nPoints; i++)
+	{
+		points[i] += vel[i];
+	}
+}
+
+void Triangulation::updateVel()
+{
+	for (int i = 0; i < nPoints; i++)
+	{
+		if (points[i].x < 20)
+		{
+			points[i].x = 20;
+			vel[i].x = -vel[i].x;
+		}
+		else if (points[i].x > 780)
+		{
+			points[i].x = 780;
+			vel[i].x = -vel[i].x;
+		}
+
+		if  (points[i].y < 20)
+		{
+			points[i].y = 20;
+			vel[i].y = -vel[i].y;
+		}
+		else if ( points[i].y > 580)
+		{
+			points[i].y = 580;
+			vel[i].y = -vel[i].y;
+		}
+	}
 }
 
 

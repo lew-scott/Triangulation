@@ -26,7 +26,7 @@ Run::Run( MainWindow& wnd )
 	wnd( wnd ),
 	gfx( wnd )
 {
-	T.Triangulate();
+
 }
 
 void Run::Go()
@@ -39,7 +39,7 @@ void Run::Go()
 
 void Run::UpdateModel()
 {
-
+	T.Triangulate();
 }
 
 void Run::ComposeFrame()
