@@ -3,62 +3,53 @@
 Triangulation::Triangulation()
 	:
 	rng(rd()),
-	xDist(150, 700),
-	yDist(150, 500)
+	xDist(150.0f, 700.0f),
+	yDist(150.0f, 500.0f)
 	//velDist(-5,5)
 {
 
 	for (int i = 0; i < nPoints; ++i)
 	{
-		points.push_back( std::make_pair(xDist(rng),yDist(rng)));
+		Vec2 P = { xDist(rng),yDist(rng) };
+		points.push_back(P);
 	}
-
-	//points.push_back(std::make_pair(100, 300));
-	//points.push_back(std::make_pair(350, 200));
-	//points.push_back(std::make_pair(420, 260));
-	//points.push_back(std::make_pair(450, 400));
-	//points.push_back(std::make_pair(700, 300));
-
-
-
+	/*
+	points.push_back({ 276.472, 217.291 });
+	points.push_back({ 335.332, 260.93 });
+	points.push_back({ 353.002, 458.704 });
+	points.push_back({ 359.424, 417.056 });
+	points.push_back({ 518.613, 195.716 });
+	points.push_back({ 559.512, 313.15 });
+	points.push_back({ 646.199, 261.582 });
+	*/
 }
 
 void Triangulation::drawScene(Graphics& gfx)
 {
 	for (int i = 0; i < nPoints; ++i)
 	{
-		drawPoint(gfx, points[i].first, points[i].second);
+		drawPoint(gfx, points[i]);
 	}
 
 	for (int i = 0; i < edges.size(); ++i)
 	{
-		drawEdge(gfx, points[edges[i].first], points[edges[i].second]);
+		drawEdge(gfx, points[edges[i].x], points[edges[i].y]);
 	}
 }
 
-void Triangulation::drawPoint(Graphics& gfx, int x, int y)
+void Triangulation::drawPoint(Graphics& gfx, Vec2 p)
 {
-	gfx.DrawCircle(x, y, 2, Colors::White);
+	gfx.DrawCircle((int)p.x, (int)p.y, 2, Colors::White);
 }
 
 
-void Triangulation::drawEdge(Graphics & gfx, std::pair<int, int> a, std::pair<int,int> b)
+void Triangulation::drawEdge(Graphics & gfx, Vec2 a, Vec2 b)
 {
-	gfx.Drawline({ (float)a.first,(float)a.second }, { (float)b.first, (float)b.second }, Colors::White);
+	gfx.Drawline({ a.x, a.y }, { b.x, b.y }, Colors::White);
 }
 
-bool Triangulation::lineIntersection(int i, int j, int k )
+bool Triangulation::lineIntersection(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4)
 {
-	int a = edges[k].first;
-	int b = edges[k].second;
-	int x = j;
-	int y = i;
-	Vec2 p1 = { (float)points[a].first, (float)points[a].second };
-	Vec2 p2 = { (float)points[b].first, (float)points[b].second };
-
-	Vec2 p3 = { (float)points[j].first, (float)points[j].second };
-	Vec2 p4 = { (float)points[i].first, (float)points[i].second };
-	
 	float tNum = ((p1.x - p3.x)*(p3.y - p4.y) - (p1.y - p3.y)*(p3.x - p4.x));
 	float tDen = ((p1.x - p2.x)*(p3.y - p4.y) - (p1.y - p2.y)*(p3.x - p4.x));
 	float t = tNum / tDen;
@@ -67,8 +58,8 @@ bool Triangulation::lineIntersection(int i, int j, int k )
 	float uDen = ((p1.x - p2.x)*(p3.y - p4.y) - (p1.y - p2.y)*(p3.x - p4.x));
 	float u = uNum / uDen;
 
-	if (t > 0 && t < 1 && u > 0 && u < 1)
-	{
+	if (t > 0.00001 && t < 0.99999 && u > 0.00001 && u < 0.99999) //  float causes error which deletes possible connections
+	{															  //  setting limits close to 0 and 1 catches it. 
 		return true;
 	}
 	else
@@ -77,61 +68,84 @@ bool Triangulation::lineIntersection(int i, int j, int k )
 	}
 }
 
-bool Triangulation::smallerDistance(int i, int j, int k)
+
+bool Triangulation::smallerDistance(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4)
 {
-	// j -> i, so j has smaller x 
-	Vec2 p1 = { (float)points[i].first - (float)points[j].first, (float)points[i].second - (float)points[j].second }; 
-	int a = edges[k].first;
-	int b = edges[k].second;
-	// a -> b, so a has smaller x
-	Vec2 p2 = { (float)points[b].first - (float)points[a].first, (float)points[b].second - (float)points[a].second };
+	Vec2 v1 = { p1.x - p2.x, p1.y - p2.y }; 
+	Vec2 v2 = { p3.x - p4.x, p3.y - p4.y };
 	
-	if (p1.GetLengthSq() < p2.GetLengthSq())
+	if (v1.GetLengthSq() < v2.GetLengthSq())
 	{
 		return true;
 	}
-
 	return false;
 }
 
-void Triangulation::makeTriangles()
+
+void Triangulation::findEdges()
 {
-	std::sort(points.begin(), points.end());
-	for (int i = 1; i < nPoints; i++)
+	
+	for (int j = 3; j < nPoints; j++) // start at 3 
 	{
-		edges.push_back(std::make_pair(0, i));
-	}
-
-	for (int j = 1; j < nPoints-1; j++) // start at 2 until last minus 1
-	{
-
-		for (int i = j + 1; i < nPoints; i++)
+		for (int i = 0; i < j; i++)
 		{
 			bool newEdge = true;
-			bool deleteEdge = false;
-			int num = edges.size();
+			int num = (int)edges.size();
 
 			for (int k = 0; k < num; k++)
 			{
-				if (lineIntersection(i,j,k) == true && smallerDistance(i,j,k) == false)
+				if (lineIntersection(points[j],points[i],points[edges[k].x],points[edges[k].y]) == true )// && lineIntersection(points[edges[k].x], points[edges[k].y], points[j], points[i]) == true)
 				{
 					newEdge = false;
-					break;
-				}
-				else if (lineIntersection(i,j,k) == true && smallerDistance(i,j,k) == true)
-				{
-					newEdge = true;
-					edges.erase(edges.begin() + k);
-					num -= 1;
-					k -= 1;
 				}
 			}
 
 			if (newEdge == true)
 			{
-				edges.push_back(std::make_pair(j, i));
+				edges.push_back({ j, i });
 			}
 		}
 	}
+}
+
+void Triangulation::Triangulate()
+{
+	SortVector();
+	writePos();
+	edges.push_back({ 0, 1 });
+	edges.push_back({ 1, 2 });
+	edges.push_back({ 2, 0 });
+
+	findEdges();
+}
+
+
+
+void Triangulation::SortVector()
+{
+	for (int j = 0; j < nPoints; j++)
+	{
+		for (int i = 0; i < nPoints-1; i++)
+		{
+			if (points[i].x > points[i + 1].x)
+			{
+				Vec2 temp = points[i];
+				points[i] = points[i + 1];
+				points[i + 1] = temp;
+			}
+		}
+	}
+
+}
+
+void Triangulation::writePos()
+{
+	std::ofstream file;
+	file.open("pos.txt");
+	for (int i = 0; i < nPoints; i++)
+	{
+		file << points[i].x << " , " << points[i].y << "\n"; 
+	}
+	file.close();
 }
 
