@@ -26,6 +26,7 @@ public:
 	void Triangulate();
 	void updateVel();
 	void updatePos();
+	void makeFirstTri();
 
 private:
 	static constexpr int nPoints = 15; 

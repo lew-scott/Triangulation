@@ -17,36 +17,48 @@ Triangulation::Triangulation()
 	}
 }
 
-void Triangulation::drawScene(Graphics& gfx)
+void Triangulation::Triangulate()
 {
-	for (int i = 0; i < nPoints; ++i)
-	{
-		drawPoint(gfx, P[i].pos);
-	}
-
-	for (int i = 0; i < edges.size(); ++i)
-	{
-		drawEdge(gfx, P[edges[i].x].pos, P[edges[i].y].pos, i);
-	}
+	// make triangles
+	edges.clear();
+	std::sort(P.begin(), P.end(), [](const pointinfo& a, const pointinfo& b) { return a.pos.x < b.pos.x; });
+	makeFirstTri();
+	findEdges();
+	updatePos();
+	updateVel();
 }
 
-void Triangulation::drawPoint(Graphics& gfx, Vec2 p)
+void Triangulation::makeFirstTri()
 {
-	gfx.DrawCircle((int)p.x, (int)p.y, 2, Colors::White);
+	edges.push_back({ 0, 1 });
+	edges.push_back({ 1, 2 });
+	edges.push_back({ 2, 0 });
 }
 
-
-void Triangulation::drawEdge(Graphics & gfx, Vec2 a, Vec2 b, int i)
+void Triangulation::findEdges()
 {
-	if (i % 2 == 0)
+
+	for (int j = 3; j < nPoints; j++) // start at next (3) point outside the first triangle
 	{
-		gfx.Drawline({ a.x, a.y }, { b.x, b.y }, Colors::White);
+		for (int i = 0; i < j; i++) // check points before for possible connection
+		{
+			bool newEdge = true;
+			int num = (int)edges.size();
+
+			for (int k = 0; k < num; k++) // test for overlapping lines 
+			{
+				if (lineIntersection(P[j].pos, P[i].pos, P[edges[k].x].pos, P[edges[k].y].pos) == true)
+				{
+					newEdge = false;
+				}
+			}
+
+			if (newEdge == true)
+			{
+				edges.push_back({ j, i });
+			}
+		}
 	}
-	else if (i % 2 == 1)
-	{
-		gfx.Drawline({ a.x, a.y }, { b.x, b.y }, Colors::Green);
-	}
-	
 }
 
 bool Triangulation::lineIntersection(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4)
@@ -69,48 +81,7 @@ bool Triangulation::lineIntersection(Vec2 p1, Vec2 p2, Vec2 p3, Vec2 p4)
 	}
 }
 
-
-
-
-void Triangulation::findEdges()
-{
-	
-	for (int j = 3; j < nPoints; j++) // start at next (3) point outside the first triangle
-	{
-		for (int i = 0; i < j; i++) // check points before for possible connection
-		{
-			bool newEdge = true;
-			int num = (int)edges.size();
-
-			for (int k = 0; k < num; k++) // test for overlapping lines 
-			{
-				if (lineIntersection( P[j].pos, P[i].pos, P[edges[k].x].pos, P[edges[k].y].pos ) == true )
-				{
-					newEdge = false;
-				}
-			}
-
-			if (newEdge == true)
-			{
-				edges.push_back({ j, i });
-			}
-		}
-	}
-}
-
-void Triangulation::Triangulate()
-{
-	// make triangles
-	edges.clear();
-	std::sort(P.begin(), P.end(), [](const pointinfo& a, const pointinfo& b) { return a.pos.x < b.pos.x; });
-	edges.push_back({ 0, 1 });
-	edges.push_back({ 1, 2 });
-	edges.push_back({ 2, 0 });
-	findEdges();
-	updatePos();
-	updateVel();
-}
-
+// Point pos code
 
 void Triangulation::updateVel()
 {
@@ -149,5 +120,36 @@ void Triangulation::updatePos()
 	}
 }
 
+//Drawing Code
+
+void Triangulation::drawScene(Graphics& gfx)
+{
+	for (int i = 0; i < nPoints; ++i)
+	{
+		drawPoint(gfx, P[i].pos);
+	}
+
+	for (int i = 0; i < edges.size(); ++i)
+	{
+		drawEdge(gfx, P[edges[i].x].pos, P[edges[i].y].pos, i);
+	}
+}
+
+void Triangulation::drawPoint(Graphics& gfx, Vec2 p)
+{
+	gfx.DrawCircle((int)p.x, (int)p.y, 2, Colors::White);
+}
 
 
+void Triangulation::drawEdge(Graphics & gfx, Vec2 a, Vec2 b, int i)
+{
+	if (i % 2 == 0)
+	{
+		gfx.Drawline({ a.x, a.y }, { b.x, b.y }, Colors::White);
+	}
+	else if (i % 2 == 1)
+	{
+		gfx.Drawline({ a.x, a.y }, { b.x, b.y }, Colors::Green);
+	}
+	
+}
